@@ -42,5 +42,7 @@ for T in Temperature
     E_vec[count] = E_avg
     Mabs_vec[count] = Mabs_avg
     count = count + 1
-    println(E_avg)
+    println(T," ",E_avg)
 end
+
+#jackknife analysis
