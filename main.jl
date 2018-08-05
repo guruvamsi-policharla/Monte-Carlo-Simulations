@@ -1,4 +1,9 @@
+#Includes
 include("ising_aux.jl")
+using Distributions
+using Plots
+
+#Code
 Tmin = 0.5
 Tchange = 0.1
 Tmax = 5.0
@@ -26,21 +31,22 @@ for T in Temperature
         for j in 1:N*N
             x = rand(1:N)
             y = rand(1:N)
+            E_0 = energy_pos(x,y,lat)
+            #M_0 = lat[x,y]
             if(test_flip(x,y,lat,T))
-                lat[x,y] = -lat[x,y]
-                E = E + 2*energy_pos(x,y,lat)
-                M = M + 2*lat[x,y]
+                E = E + energy_pos(x,y,lat) - E_0
+                #M = M + lat[x,y] - M_0
                 Mabs = abs(M)
             end
         end
         etot= etot + E
-        mabstot= mabstot + abs(M);
+        #mabstot= mabstot + Mabs;
     end
 
     E_avg=etot*norm;
-    Mabs_avg=mabstot*norm;
+    #Mabs_avg=mabstot*norm;
     E_vec[count] = E_avg
-    Mabs_vec[count] = Mabs_avg
+    #Mabs_vec[count] = Mabs_avg
     count = count + 1
     println(T," ",E_avg)
 end
