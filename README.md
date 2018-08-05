@@ -8,3 +8,5 @@ ising_aux.jl contains the auxilary functions needed for the monte carlo simulati
 part_fun.jl contains the code for calculating the average energy axactly using the partition function
 
 pi.jl is a test file for a poor man's paralellisation to calculate pi
+
+Heisenberg branch is a skyrmion based program
