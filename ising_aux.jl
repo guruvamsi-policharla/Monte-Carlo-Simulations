@@ -1,12 +1,24 @@
+function sample_gauss(v)
+    #Input is the central vector around which we flip
+    var = 0.4
+    v_new = [rand(Normal(v[1],var)),rand(Normal(v[2],var)),rand(Normal(v[3],var))]
+    v_new = v_new/sqrt(vecdot(v_new,v_new))
+    return convert(Vector,v_new)
+end
+
+function sample_uni()
+    x = [rand(Uniform(-1,1)), rand(Uniform(-1,1)), rand(Uniform(-1,1))]
+    x = x/sqrt(vecdot(x,x))
+    return convert(Vector,x)
+end
+
 function initialise(N::Int)
     """ Initialising the lattice with random values """
     #lat = Array{Float64, 3}(N, N)
     lat = Array{Vector{Float64},2}(N, N);
     for i = 1:N
         for j = 1:N
-            theta = rand(Uniform(0,2*pi))
-            phi = rand(Uniform(0,2*pi))
-            lat[i,j] = convert(Vector,[sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta)])
+            lat[i,j] = sample_uni()
         end
     end
     return lat
@@ -50,9 +62,8 @@ end
 
 function test_flip(x, y, lat, T)
 """ Checks whether energy allows for a flip or not """
-    theta = rand(Uniform(0,2*pi))
-    phi = rand(Uniform(0,2*pi))
-    a = convert(Vector,[sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta)])
+    #a = sample_uni()
+    a = sample_gauss(lat[x,y])
     de = -energy_pos(x,y,lat) + energy_pos(x,y,lat,a);
 
     if(de<0)
@@ -90,6 +101,7 @@ function transient_results(lat, transient::Int, T)
 end
 
 function total_mag(lat)
+    #returns total magnetisation vector
     return sum(lat)
 end
 
@@ -102,7 +114,7 @@ function total_energy(lat)
     end
     return e/2
 end
-
+'''
 function bin_init(val,N)
     val_s = bin(val,N*N)
     lat = zeros(N*N,1)
@@ -116,3 +128,4 @@ function bin_init(val,N)
     lat = reshape(lat,(4,4))
     return lat
 end
+'''
