@@ -1,19 +1,18 @@
 function initialise(N::Int)
     """ Initialising the lattice with random values """
-lat = zeros(N,N)
+    #lat = Array{Float64, 3}(N, N)
+    lat = Array{Vector{Float64},2}(N, N);
     for i = 1:N
         for j = 1:N
-            if (rand()>=0.5)
-                lat[i,j] = 1
-            else
-                lat[i,j] = -1
-            end
+            x = [rand(Uniform(0,1)), rand(Uniform(0,1)), rand(Uniform(0,1))]
+            x = x/sqrt(vecdot(x,x))
+            lat[i,j] = convert(Vector,x)
         end
     end
     return lat
 end
 
-function energy_pos(x, y, lat)
+function energy_pos(x, y, lat, a = [0,0,0])
     """ Calculating energy of the position """
     N = size(lat,1)
     if(y==N)
@@ -40,34 +39,52 @@ function energy_pos(x, y, lat)
         right=x+1;
     end
 
-    energy = -1*lat[x,y]*(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]);
-    return energy
+    if a == [0,0,0]
+        energy = -1*vecdot(lat[x,y],(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]));
+        return energy
+    else
+        energy = -1*vecdot(a,(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]));
+        return energy
+    end
 end
 
 function test_flip(x, y, lat, T)
 """ Checks whether energy allows for a flip or not """
-    de = -energy_pos(x,y,lat);
+    theta = rand(Uniform(0,2*pi))
+    phi = rand(Uniform(0,2*pi))
+    a = convert(Vector,[sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta)])
+    de = -energy_pos(x,y,lat) + energy_pos(x,y,lat,a);
 
     if(de<0)
-        flip = true;
-    elseif(rand()<exp(-2*de/T))
-        flip = true;
+        lat[x,y] = a
+        return true
+    elseif(rand()<exp(-de/T))
+        lat[x,y] = a
+        return true
     else
-        flip = false;
+        return false
     end
-    return flip
 end
+
+'''
+function flip(x,y,lat)
+    N = size(lat,1)
+    theta = rand(Uniform(0,2*pi))
+    phi = rand(Uniform(0,2*pi))
+
+    #Flipping randomly
+    lat[x,y] = [sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta)]
+end
+'''
 
 function transient_results(lat, transient::Int, T)
     """Takes lat as input and removes initial transients by running for transient number of steps"""
     N = size(lat,1)
     for i = 1:transient
         for j = 1:N*N
-            x = rand(1:N)
-            y = rand(1:N)
-            if(test_flip(x,y,lat,T) == true)
-                lat[x,y] = -lat[x,y];
-            end
+                x = rand(1:N)
+                y = rand(1:N)
+                test_flip(x,y,lat,T)
         end
     end
 end
