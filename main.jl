@@ -4,16 +4,17 @@ using Distributions
 using Plots
 
 #Code
-Tmin = 0.001
+Tmin = 0.01
 Tchange = 0.1
 Tmax = 5.0
 mcs = 100000
-N = 4
+M = 6
+N = 6
 
 
-lat = initialise(N)
+lat = initialise(M,N)
 
-norm=(1.0/float(mcs*N*N))
+norm=(1.0/float(mcs*M*N))
 
 Temperature = Tmin:Tchange:Tmax
 E_vec = zeros(length(Temperature),1)
@@ -24,7 +25,7 @@ count = 1
 for T in Temperature
 
     transient_results(lat,1000,T)
-    M = total_mag(lat)
+    Mag = total_mag(lat)
     E = total_energy(lat)
 
     etot=0;
@@ -32,26 +33,26 @@ for T in Temperature
     acc_rat = 0;
 
     for i in 1:mcs
-        for j in 1:N*N
-            x = rand(1:N)
+        for j in 1:M*N
+            x = rand(1:M)
             y = rand(1:N)
             E_0 = energy_pos(x,y,lat)
-            M_0 = lat[x,y]
+            Mag_0 = lat[x,y]
             if(test_flip(x,y,lat,T))
                 acc_rat = acc_rat + 1
                 E = E + energy_pos(x,y,lat) - E_0
-                M = M + lat[x,y] - M_0
+                Mag = Mag + lat[x,y] - Mag_0
             end
         end
         etot= etot + E
-        mabstot = mabstot + vecdot(M,M)
+        mabstot = mabstot + vecdot(Mag,Mag)
     end
 
     acc_rat = acc_rat*norm
     M_vec[count] = mabstot*norm
     E_vec[count] = etot*norm
     acc_vec[count] = acc_rat
-    println(T," ",M_vec[count])
+    println(T," ",E_vec[count])
     count = count + 1
 end
 
