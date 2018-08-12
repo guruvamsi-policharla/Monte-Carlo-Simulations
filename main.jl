@@ -1,5 +1,7 @@
 include("ising_aux.jl")
-Tmin = 0.5
+using Plots
+using Distributions
+Tmin = 0.001
 Tchange = 0.1
 Tmax = 5.0
 mcs = 100000
@@ -16,7 +18,6 @@ for T in Temperature
     #print(T)
     transient_results(lat,1000,T)
     M = total_mag(lat)
-    Mabs = abs(M)
     E = total_energy(lat)
 
     etot=0;
