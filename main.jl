@@ -15,7 +15,7 @@ E_vec = zeros(length(Temperature),1)
 Mabs_vec = zeros(length(Temperature),1)
 count = 1
 for T in Temperature
-    #print(T)
+
     transient_results(lat,1000,T)
     M = total_mag(lat)
     E = total_energy(lat)
