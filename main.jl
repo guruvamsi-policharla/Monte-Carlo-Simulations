@@ -8,8 +8,8 @@ Tmin = 0.01
 Tchange = 0.1
 Tmax = 5.0
 mcs = 100000
-M = 6
-N = 6
+M = 1
+N = 2
 
 
 lat = initialise(M,N)

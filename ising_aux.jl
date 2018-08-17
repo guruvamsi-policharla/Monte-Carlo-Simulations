@@ -1,6 +1,6 @@
 function sample_gauss(v)
     #Input is the central vector around which we flip
-    var = 0.4
+    var = 0.1
     v_new = [rand(Normal(v[1],var)),rand(Normal(v[2],var)),rand(Normal(v[3],var))]
     v_new = v_new/sqrt(vecdot(v_new,v_new))
     return convert(Vector,v_new)
@@ -30,8 +30,13 @@ function energy_pos(x, y, lat, a = [0,0,0])
 
 
     if(M==1 && N==2)
-        energy = -1*vecdot(lat[1,1],lat[1,2]);
-        return energy
+        if(a == [0,0,0])
+            energy = -1*vecdot(lat[1,1],lat[1,2])
+            return energy
+        else
+            energy = -1*vecdot(a,lat[x,mod(y,2)+1])
+            return energy
+        end
     end
 
     if(M!=1 && N!=1)
@@ -73,8 +78,8 @@ end
 
 function test_flip(x, y, lat, T)
 """ Checks whether energy allows for a flip or not """
-    a = sample_uni()
-    #a = sample_gauss(lat[x,y])
+    #a = sample_uni()
+    a = sample_gauss(lat[x,y])
     de = -energy_pos(x,y,lat) + energy_pos(x,y,lat,a);
 
     if(de<0)
