@@ -7,19 +7,25 @@ using Plots
 Tmin = 0.01
 Tchange = 0.1
 Tmax = 5.0
-mcs = 100000
-M = 1
-N = 2
+mcs = 1000
+M = 4
+N = 4
 
 
 lat = initialise(M,N)
 
-norm=(1.0/float(mcs*M*N))
+norm=(1.0/float(M*N))
 
 Temperature = Tmin:Tchange:Tmax
-E_vec = zeros(length(Temperature),1)
-M_vec = zeros(length(Temperature),1)
-acc_vec = zeros(length(Temperature),1)
+
+E_vec = zeros(length(Temperature),2)
+M_vec = zeros(length(Temperature),2)
+acc_vec = zeros(length(Temperature),2)
+
+E_jack = zeros(mcs,1)
+M_jack = zeros(mcs,1)
+acc_jack = zeros(mcs,1)
+
 
 count = 1
 for T in Temperature
@@ -44,15 +50,23 @@ for T in Temperature
                 Mag = Mag + lat[x,y] - Mag_0
             end
         end
-        etot= etot + E
-        mabstot = mabstot + vecdot(Mag,Mag)
-    end
+        mabs = sqrt(vecdot(Mag,Mag))
 
-    acc_rat = acc_rat*norm
-    M_vec[count] = mabstot*norm
-    E_vec[count] = etot*norm
-    acc_vec[count] = acc_rat
-    println(T," ",E_vec[count])
+        E_jack[i] = E
+        M_jack[i] = mabs
+        acc_jack[i] = acc_rat
+
+        etot= etot + E
+        mabstot = mabstot + mabs
+    end
+    E_jack = E_jack*norm
+    M_jack = M_jack*norm
+    acc_jack = acc_jack*norm
+
+    M_vec[count,1], M_vec[count,2] = jackknife(M_jack)
+    E_vec[count,1], E_vec[count,2] = jackknife(E_jack)
+    acc_vec[count,1], acc_vec[count,2] = jackknife(acc_jack)
+    println(T," ",E_vec[count,1])
     count = count + 1
 end
 

@@ -125,3 +125,14 @@ function exact_heisen_energy(T)
     #(e^(1/T) (-1 + T) T - e^(-1/T) T (1 + T))/(2 T sinh(1/T))
     return (exp(1/T) * (-1 + T) * T - exp(-1/T) * T * (1 + T))/(2*T*sinh(1/T))
 end
+
+function jackknife(vec)
+    s = sum(vec)
+    n = length(vec)
+    vec_jack = (s - vec)/(n-1)
+    jack_avg = sum(vec_jack) / n
+
+    jack_err = sqrt(sum((vec_jack-jack_avg).^2) * (n-1)/n)
+    #jack_err = sqrt((n-1)*(jack_err - jack_avg.^2))
+    return jack_avg,jack_err
+end
