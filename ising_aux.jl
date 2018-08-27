@@ -24,63 +24,37 @@ function initialise(M::Int, N::Int)
     return lat
 end
 
-function energy_pos(x, y, lat, a = [0,0,0])
+function energy_pos(x, y, J, lat, a = [0,0,0])
     M = size(lat,1)
     N = size(lat,2)
 
+    up = mod(y,N)+1
+    down = mod(y-2,N)+1
+    left = mod(x-2,N) + 1
+    right = mod(x,N) + 1
+    urc = [mod(x,M)+1,mod(y,N)+1]
+    ulc = [mod(x-2,M)+1,mod(y,N)+1]
+    lrc = [mod(x,M)+1,mod(y-2,N)+1]
+    llc = [mod(x-2,M)+1,mod(y-2,N)+1]
 
-    if(M==1 && N==2)
-        if(a == [0,0,0])
-            energy = -1*vecdot(lat[1,1],lat[1,2])
-            return energy
-        else
-            energy = -1*vecdot(a,lat[x,mod(y,2)+1])
-            return energy
-        end
+    if(a == [0,0,0])
+        energy = -1*vecdot(lat[x,y],(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]));
+        energy = energy + -J*vecdot(lat[x,y],(lat[urc[1],urc[2]]+lat[ulc[1],ulc[2]]+lat[lrc[1],lrc[2]]+lat[llc[1],llc[2]]));
+        return energy
+    else
+        energy = -1*vecdot(a,(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]));
+        energy = energy + -J*vecdot(a,(lat[urc[1],urc[2]]+lat[ulc[1],ulc[2]]+lat[lrc[1],lrc[2]]+lat[llc[1],llc[2]]));
+        return energy
     end
 
-    if(M!=1 && N!=1)
-        if(y==N)
-            up=1;
-        else
-            up=y+1;
-        end
-
-        if(y==1)
-            down=N;
-        else
-            down=y-1;
-        end
-
-        if(x==1)
-            left=M;
-        else
-            left=x-1;
-        end
-
-        if(x==M)
-            right=1;
-        else
-            right=x+1;
-        end
-
-        if(a == [0,0,0])
-            energy = -1*vecdot(lat[x,y],(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]));
-            return energy
-        else
-            energy = -1*vecdot(a,(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]));
-            return energy
-        end
-    end
-
-    return 0
 end
 
-function test_flip(x, y, lat, T)
+
+function test_flip(x, y, J, lat, T)
 """ Checks whether energy allows for a flip or not """
-    #a = sample_uni()
-    a = sample_gauss(lat[x,y])
-    de = -energy_pos(x,y,lat) + energy_pos(x,y,lat,a);
+    a = sample_uni()
+    #a = sample_gauss(lat[x,y])
+    de = -energy_pos(x,y,J,lat) + energy_pos(x,y,J,lat,a);
 
     if(de<0)
         lat[x,y] = a
@@ -101,7 +75,7 @@ function transient_results(lat, transient::Int, T)
         for j = 1:M*N
                 x = rand(1:M)
                 y = rand(1:N)
-                test_flip(x,y,lat,T)
+                test_flip(x,y,J,lat,T)
         end
     end
 end
@@ -115,7 +89,7 @@ function total_energy(lat)
     e = 0.0
     for i = 1:size(lat,1)
         for j = 1:size(lat,2)
-            e = e + energy_pos(i,j,lat)
+            e = e + energy_pos(i,j,J,lat)
         end
     end
     return e/2

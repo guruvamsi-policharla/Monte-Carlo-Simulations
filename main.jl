@@ -4,12 +4,12 @@ using Distributions
 using Plots
 
 #Code
-Tmin = 0.01
-Tchange = 0.1
-Tmax = 5.0
-mcs = 1000
-M = 4
-N = 4
+Tmin = 0.0001
+Tchange = 0.05
+Tmax = 1.0
+mcs = 10000
+M = 16
+N = 16
 
 
 lat = initialise(M,N)
@@ -26,6 +26,7 @@ E_jack = zeros(mcs,1)
 M_jack = zeros(mcs,1)
 acc_jack = zeros(mcs,1)
 
+J = 0.3
 
 count = 1
 for T in Temperature
@@ -42,11 +43,11 @@ for T in Temperature
         for j in 1:M*N
             x = rand(1:M)
             y = rand(1:N)
-            E_0 = energy_pos(x,y,lat)
+            E_0 = energy_pos(x,y,J,lat)
             Mag_0 = lat[x,y]
-            if(test_flip(x,y,lat,T))
+            if(test_flip(x,y,J,lat,T))
                 acc_rat = acc_rat + 1
-                E = E + energy_pos(x,y,lat) - E_0
+                E = E + energy_pos(x,y,J,lat) - E_0
                 Mag = Mag + lat[x,y] - Mag_0
             end
         end
