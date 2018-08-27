@@ -26,7 +26,7 @@ E_jack = zeros(mcs,1)
 M_jack = zeros(mcs,1)
 acc_jack = zeros(mcs,1)
 
-J = 0.3
+J = 0.7
 
 count = 1
 for T in Temperature
