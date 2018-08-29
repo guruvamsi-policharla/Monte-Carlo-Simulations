@@ -38,12 +38,12 @@ function energy_pos(x, y, J, lat, a = [0,0,0])
     llc = [mod(x-2,M)+1,mod(y-2,N)+1]
 
     if(a == [0,0,0])
-        energy = -1*vecdot(lat[x,y],(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]));
-        energy = energy + -J*vecdot(lat[x,y],(lat[urc[1],urc[2]]+lat[ulc[1],ulc[2]]+lat[lrc[1],lrc[2]]+lat[llc[1],llc[2]]));
+        energy = 1*vecdot(lat[x,y],(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]));
+        energy = energy + J*vecdot(lat[x,y],(lat[urc[1],urc[2]]+lat[ulc[1],ulc[2]]+lat[lrc[1],lrc[2]]+lat[llc[1],llc[2]]));
         return energy
     else
-        energy = -1*vecdot(a,(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]));
-        energy = energy + -J*vecdot(a,(lat[urc[1],urc[2]]+lat[ulc[1],ulc[2]]+lat[lrc[1],lrc[2]]+lat[llc[1],llc[2]]));
+        energy = 1*vecdot(a,(lat[left,y]+lat[right,y]+lat[x,up]+lat[x,down]));
+        energy = energy + J*vecdot(a,(lat[urc[1],urc[2]]+lat[ulc[1],ulc[2]]+lat[lrc[1],lrc[2]]+lat[llc[1],llc[2]]));
         return energy
     end
 
